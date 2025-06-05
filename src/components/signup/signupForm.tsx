@@ -20,7 +20,6 @@ export default function SignupForm() {
   const { mutate, isPending, isSuccess, isError, error } = useMutation({
     mutationFn: signup,
   });
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 

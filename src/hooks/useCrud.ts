@@ -1,3 +1,4 @@
+import axiosInstance from "@/lib/api";
 import {
   getList,
   getOne,
@@ -48,6 +49,8 @@ export const useCrud = <T>(key: string, endpoint: string) => {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: [key] }),
       });
     },
+
+    
 
     useDelete: () => {
       const queryClient = useQueryClient();

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import ProductCard from "@/components//dashboard/productCard";
+import { Product } from "@/types/types";
+import ProductDetailModal from "@/components/dashboard/seller/productDetailedModal";
 
 export default function ProductListPage() {
   const router = useRouter();
@@ -13,6 +15,7 @@ export default function ProductListPage() {
   );
   const { data: products, isLoading } = useProducts(selectedCategory);
   const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   return (
     <div className="p-6 text-gray-700">
@@ -57,9 +60,19 @@ export default function ProductListPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {products?.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <div key={product.id} onClick={() => setSelectedProduct(product)}>
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
+      )}
+
+      {selectedProduct && (
+        <ProductDetailModal
+          product={selectedProduct}
+          isOpen={!!selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
       )}
     </div>
   );

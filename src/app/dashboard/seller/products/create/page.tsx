@@ -5,6 +5,7 @@ import { createOne } from "@/services/crudService";
 import { Product } from "@/types/types";
 import { useCategories } from "@/hooks/useCategories";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function CreateProductPage() {
   const {
@@ -14,15 +15,26 @@ export default function CreateProductPage() {
   } = useForm<Partial<Product>>();
   const { data: categories } = useCategories();
   const router = useRouter();
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const onSubmit = async (data: Partial<Product>) => {
-    try {
-      await createOne<Product>("/products/", data);
-      router.push("/dashboard/seller/products");
-    } catch (err) {
-      console.error("Бараа үүсгэхэд алдаа гарлаа:", err);
-    }
-  };
+  const formData = new FormData();
+  formData.append("name", data.name || "");
+  formData.append("description", data.description || "");
+  formData.append("price", String(data.price || ""));
+  formData.append("stock", String(data.stock || ""));
+  formData.append("category", String(data.category || ""));
+  if (imageFile) {
+    formData.append("image", imageFile);
+  }
+
+  try {
+    await createOne("/products/", formData, true); // isMultipart = true
+    router.push("/dashboard/seller/products");
+  } catch (err) {
+    console.error("Бараа үүсгэхэд алдаа гарлаа:", err);
+  }
+};
 
   return (
     <div className="p-6 max-w-2xl mx-auto text-gray-700">
@@ -79,6 +91,20 @@ export default function CreateProductPage() {
               </option>
             ))}
           </select>
+        </FormGroup>
+
+        <FormGroup label="Зураг" htmlFor="image">
+          <input
+            id="image"
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              if (e.target.files?.[0]) {
+                setImageFile(e.target.files[0]);
+              }
+            }}
+            className="w-full border p-2 rounded"
+          />
         </FormGroup>
 
         <div className="text-right">

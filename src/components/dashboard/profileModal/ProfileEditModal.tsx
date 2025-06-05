@@ -23,6 +23,7 @@ export default function ProfileEditModal({ initialData, onClose }: Props) {
     store_name: initialData.profile?.store_name ?? "",
     bank_account: initialData.profile?.bank_account ?? "",
     description: initialData.profile?.description ?? "",
+    profile_picture: null as File | null,
   });
 
   const handleChange = (
@@ -40,6 +41,7 @@ export default function ProfileEditModal({ initialData, onClose }: Props) {
           email: form.email,
           phone: form.phone,
           address: form.address,
+          profile_picture: form.profile_picture as any,
         },
         profile: initialData.profile
           ? {
@@ -51,7 +53,7 @@ export default function ProfileEditModal({ initialData, onClose }: Props) {
           : null,
       };
 
-      await update.mutateAsync({ id: initialData.user.id, data: payload });
+      await update(initialData.user.id, payload);
       onClose();
     } catch (err) {
       console.error("Failed to update profile", err);
@@ -65,35 +67,26 @@ export default function ProfileEditModal({ initialData, onClose }: Props) {
           Профайл засах
         </h2>
 
-        {/* Хэрэглэгчийн мэдээлэл */}
         <Section title="Хэрэглэгчийн мэдээлэл">
-          <Input
-            label="Нэр"
-            name="username"
-            value={form.username}
-            onChange={handleChange}
-          />
-          <Input
-            label="Имэйл"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-          />
-          <Input
-            label="Утас"
-            name="phone"
-            value={form.phone}
-            onChange={handleChange}
-          />
-          <Input
-            label="Хаяг"
-            name="address"
-            value={form.address}
-            onChange={handleChange}
+          <Input label="Нэр" name="username" value={form.username} onChange={handleChange} />
+          <Input label="Имэйл" name="email" value={form.email} onChange={handleChange} />
+          <Input label="Утас" name="phone" value={form.phone} onChange={handleChange} />
+          <Input label="Хаяг" name="address" value={form.address} onChange={handleChange} />
+
+          <label className="block text-sm font-medium text-[rgb(255,194,13)] mb-1 mt-2">
+            Профайл зураг
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null;
+              setForm((prev) => ({ ...prev, profile_picture: file }));
+            }}
+            className="w-full border text-black border-gray-300 rounded p-2"
           />
         </Section>
 
-        {/* Худалдагч мэдээлэл */}
         {initialData.profile && (
           <Section title="Дэлгүүрийн мэдээлэл">
             <Input
@@ -117,12 +110,8 @@ export default function ProfileEditModal({ initialData, onClose }: Props) {
           </Section>
         )}
 
-        {/* Buttons */}
         <div className="flex justify-end gap-4 pt-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded text-gray-600 hover:underline"
-          >
+          <button onClick={onClose} className="px-4 py-2 rounded text-gray-600 hover:underline">
             Хаах
           </button>
           <button
@@ -137,14 +126,7 @@ export default function ProfileEditModal({ initialData, onClose }: Props) {
   );
 }
 
-// 🔹 Section Wrapper
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
       <h3 className="text-lg font-semibold text-black border-l-4 pl-2 border-[rgb(255,194,13)]">
@@ -155,7 +137,6 @@ function Section({
   );
 }
 
-// 🔹 Styled Input Field
 function Input({
   label,
   name,
@@ -169,9 +150,7 @@ function Input({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-[rgb(255,194,13)] mb-1">
-        {label}
-      </label>
+      <label className="block text-sm font-medium text-[rgb(255,194,13)] mb-1">{label}</label>
       <input
         name={name}
         value={value}
@@ -182,7 +161,6 @@ function Input({
   );
 }
 
-// 🔹 Styled Textarea
 function Textarea({
   label,
   name,
@@ -196,9 +174,7 @@ function Textarea({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-[rgb(255,194,13)] mb-1">
-        {label}
-      </label>
+      <label className="block text-sm font-medium text-[rgb(255,194,13)] mb-1">{label}</label>
       <textarea
         name={name}
         value={value}

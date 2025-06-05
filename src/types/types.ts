@@ -73,6 +73,10 @@ export interface Order {
   order_items: OrderItem[];
 }
 
+export interface CartItem {
+  productId: number;
+  quantity: number;
+}
 export interface OrderTemplate {
   id: number;
   buyer: number;
@@ -101,10 +105,16 @@ export interface Payment {
 
 export interface Review {
   id: number;
-  product: number;
-  buyer: number;
+  product: Product;
+  buyer?: User;
   rating: number;
   comment?: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface ReviewPost {
+  product: number;
+  rating: number;
+  comment?: string;
 }

@@ -1,6 +1,6 @@
-import Sidebar from "@/components/dashboard/seller/sellerSidebar";
+import Sidebar from "@/components/dashboard/buyer/buyerSidebar";
 
-export default function SellerDashboardLayout({
+export default function BuyerDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
